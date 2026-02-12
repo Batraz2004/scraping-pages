@@ -30,7 +30,7 @@ class Scraping
 
         // предложения
         foreach ($allElements as $key => $el) {
-            if (strpos($el->nodeName, 'script') !== false || strpos($el->nodeName, 'footer') !== false) {
+            if (strpos($el->nodeName, 'script') !== false) {
                 $el->parentElement->removeChild($el);
                 continue;
             }
