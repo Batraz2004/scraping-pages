@@ -18,18 +18,18 @@ class Scraping
 
         //навигация по тегам
         $doc = new DOMDocument();
+        $doc->preserveWhiteSpace = false;
         $doc->loadHTML($htmlString);
         $xpath = new DOMXPath($doc);
 
-        //все элементы в рамках тега body
-        $body = $doc->getElementsByTagName('body')->item(0);
-        $query = '//*';
-        $allElements = $xpath->query($query, $body);
+        $query = '//body/*';
+        $allElements = $xpath->query($query);
 
         $extractedWords = [];
 
         // предложения
         foreach ($allElements as $key => $el) {
+            // echo '<pre>'.htmlentities(print_r($el->nodeName, true)).'</pre>';exit();
             if (strpos($el->nodeName, 'script') !== false) {
                 $el->parentElement->removeChild($el);
                 continue;
@@ -46,7 +46,7 @@ class Scraping
             foreach ($textContentOfNodeArr as $word) {
                 $word = trim($word); //удалить пробелы у слова
                 $textContentOfNodeArr = explode(" ", $word);
-                foreach ($textContentOfNodeArr as $val) {
+                // foreach ($textContentOfNodeArr as $val) {
                     if (
                         strlen($val) > 0
                         && preg_match("/^[A-Za-z]+/", $val)
@@ -56,6 +56,12 @@ class Scraping
                         $extractedWords[] = $val;
                     }
                 }
+                // if (strlen($word) > 0) {
+                //     preg_match_all('/[A-Za-z]+/', $word, $matches);
+                //     foreach ($matches as $match) {
+                //         $extractedWords[] = $match;
+                //     }
+                // }
             }
         }
 
