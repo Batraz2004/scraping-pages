@@ -46,7 +46,7 @@ class Scraping
             foreach ($textContentOfNodeArr as $word) {
                 $word = trim($word); //удалить пробелы у слова
                 $textContentOfNodeArr = explode(" ", $word);
-                // foreach ($textContentOfNodeArr as $val) {
+                foreach ($textContentOfNodeArr as $val) {
                     if (
                         strlen($val) > 0
                         && preg_match("/^[A-Za-z]+/", $val)
