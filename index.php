@@ -7,7 +7,7 @@ use App\Services\Scraping;
 
 $url = 'https://books.toscrape.com/';
 
-$scrapingObject = new Scraping;
+$scrapingObject = new Scraping(new \GuzzleHttp\Client());
 
 $result = $scrapingObject->procces($url);
 

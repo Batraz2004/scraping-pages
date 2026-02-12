@@ -7,9 +7,11 @@ use DOMXPath;
 
 class Scraping
 {
+    public function __construct(public \GuzzleHttp\Client $httpClient) {}
+
     public function procces($url): array
     {
-        $httpClient = new \GuzzleHttp\Client();
+        $httpClient = $this->httpClient;
 
         $response = $httpClient->get($url);
         $htmlString = (string) $response->getBody(); // содержит документ в виде строки
