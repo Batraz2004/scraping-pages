@@ -11,6 +11,11 @@ class Scraping
 
     public function procces($url): array
     {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            echo "не корректный url";
+            return [];
+        }
+
         $httpClient = $this->httpClient;
 
         $response = $httpClient->get($url);
