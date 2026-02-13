@@ -9,12 +9,14 @@ use Spatie\Crawler\CrawlObservers\CrawlObserver;
 
 class PageScrawlerObserver extends CrawlObserver
 {
+    public function __construct(public ?array $pageUrls = null) {}
+
     /*
      * Called when the crawler will crawl the url.
      */
     public function willCrawl(UriInterface $url, ?string $linkText): void
     {
-        echo $url."<br>";
+        echo "crawling process:" . $url . "<br>";
     }
 
     /*
@@ -26,7 +28,8 @@ class PageScrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        echo $url."<br>";
+        echo "crawling succes:" . $url . "<br>";
+        $this->pageUrls['urls'][] = $url->__toString();
     }
 
     /*
@@ -38,13 +41,15 @@ class PageScrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        echo $url."<br>";
+        echo "failed with url:" . $url . "<br>";
     }
 
     /*
      * Called when the crawl has ended.
      */
-    public function finishedCrawling(): void {
+    public function finishedCrawling(): void
+    {
         echo "<br>finish crawling!";
+        file_put_contents('App/Data/siteUrlsByCrawling.json', json_encode($this->pageUrls));
     }
 }

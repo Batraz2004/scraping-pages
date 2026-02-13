@@ -4,6 +4,7 @@ namespace App\Services;
 
 use DOMDocument;
 use DOMXPath;
+use Exception;
 
 class Scraping
 {
@@ -13,7 +14,7 @@ class Scraping
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             echo "не корректный url";
-            return [];
+            throw new Exception("не корректный url", 422);
         }
 
         $httpClient = $this->httpClient;
@@ -22,6 +23,7 @@ class Scraping
         $htmlString = (string) $response->getBody(); // содержит документ в виде строки
 
         //навигация по тегам
+        libxml_use_internal_errors(true);
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->loadHTML($htmlString);
