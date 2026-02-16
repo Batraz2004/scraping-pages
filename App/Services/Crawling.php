@@ -5,10 +5,11 @@ namespace App\Services;
 use Exception;
 use Spatie\Crawler\Crawler;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
+use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
 
-class Scrawling
+class Crawling
 {
-    public function __construct(public \GuzzleHttp\Client $httpClient, public PageScrawlerObserver $pageObserver) {}
+    public function __construct(public \GuzzleHttp\Client $httpClient, public PageСrawlerObserver $pageObserver) {}
 
     public function proccess($url): CrawlObserver
     {
@@ -26,6 +27,7 @@ class Scrawling
 
         Crawler::create()
             ->setCrawlObserver($pageObserver)
+            ->setCrawlProfile(new CrawlInternalUrls($url))//что бы не переходить на ссылки переходящие на другой сайт
             ->startCrawling($url);
 
         return $pageObserver;

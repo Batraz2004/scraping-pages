@@ -29,16 +29,15 @@ class Scraping
         $doc->loadHTML($htmlString);
         $xpath = new DOMXPath($doc);
 
-        $query = '//body/*';
+        $query = "//body/*";
+
         $allElements = $xpath->query($query);
 
         $extractedWords = [];
 
         // предложения
-        foreach ($allElements as $key => $el) {
-            // echo '<pre>'.htmlentities(print_r($el->nodeName, true)).'</pre>';exit();
-            if (strpos($el->nodeName, 'script') !== false) {
-                $el->parentElement->removeChild($el);
+        foreach ($allElements as $el) {
+            if (in_array($el->nodeName, ['script', 'style'])) {
                 continue;
             }
 
@@ -56,24 +55,18 @@ class Scraping
                 foreach ($textContentOfNodeArr as $val) {
                     if (
                         strlen($val) > 0
-                        && preg_match("/^[A-Za-z]+/", $val)
+                        && preg_match("/^(?=.*[A-Za-z])[\dA-Za-z@.,;:=_-]*$/", $val) //нужно что бы строка начиналась ли цифры или с англиской буквы а потом может содержать разные знаки разделители, стркоа обязательно должна иметь буквы
                     ) {
                         // $word = preg_replace('/\s+/', "\n\r", $word);
                         // $word = trim($word, " \n\t\r\v");
                         $extractedWords[] = $val;
                     }
                 }
-                // if (strlen($word) > 0) {
-                //     preg_match_all('/[A-Za-z]+/', $word, $matches);
-                //     foreach ($matches as $match) {
-                //         $extractedWords[] = $match;
-                //     }
-                // }
             }
         }
 
-        $result = array_unique($extractedWords);
+        sort($extractedWords, SORT_STRING);
 
-        return $result;
+        return $extractedWords;
     }
 }

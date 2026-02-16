@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 
-class PageScrawlerObserver extends CrawlObserver
+class PageСrawlerObserver extends CrawlObserver
 {
     public function __construct(public ?array $pageUrls = null) {}
 
@@ -16,7 +16,7 @@ class PageScrawlerObserver extends CrawlObserver
      */
     public function willCrawl(UriInterface $url, ?string $linkText): void
     {
-        echo "crawling process:" . $url . "<br>";
+        // echo "crawling process:" . $url . "<br>";
     }
 
     /*
@@ -28,7 +28,7 @@ class PageScrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        echo "crawling succes:" . $url . "<br>";
+        // echo "crawling succes:" . $url . "<br>";
         $this->pageUrls['urls'][] = $url->__toString();
     }
 
@@ -41,7 +41,9 @@ class PageScrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        echo "failed with url:" . $url . "<br>";
+        $failMessage = "failed with url:" . $url;
+        file_put_contents('App/Logs/crawling', $failMessage, FILE_APPEND);
+        // echo $failMessage . "<br>";
     }
 
     /*
@@ -49,7 +51,7 @@ class PageScrawlerObserver extends CrawlObserver
      */
     public function finishedCrawling(): void
     {
-        echo "<br>finish crawling!";
+        // echo "<br>finish crawling!";
         file_put_contents('App/Data/siteUrlsByCrawling.json', json_encode($this->pageUrls));
     }
 }
