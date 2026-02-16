@@ -1,9 +1,6 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/App/Services/Scraping.php';
-require __DIR__ . '/App/Services/Scrawling.php';
-require __DIR__ . '/App/Services/PageScrawlerObserver.php';
 
 use App\Services\PageScrawlerObserver;
 use App\Services\Scraping;
