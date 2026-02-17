@@ -18,40 +18,42 @@ try {
 
     $url = $_GET['url'];
 
-    $scrawlingObserver = new PageСrawlerObserver();
-    $scrawlingObj = new Crawling(new Client, $scrawlingObserver);
+    $crawlingObserver = new PageСrawlerObserver();
+    $crawlingObj = new Crawling(new Client, $crawlingObserver);
 
     $errorScrapingLogsFilePath = 'App/Logs/Scraping.Log';
 
     //обход и сбор всех страниц сайта по указанному url
-    /** @var PageСrawlerObserver $pageObserverBeScrawling */
-    $pageObserverBeScrawling = $scrawlingObj->proccess($url);
-    $pageUrlsByScrawling = $pageObserverBeScrawling->pageUrls;
+    /** @var PageСrawlerObserver $pageObserverBeCrawling */
+    $pageObserverBeCrawling = $crawlingObj->proccess($url);
+    $pageUrlsByCrawling = $pageObserverBeCrawling->pageUrls;
 
     $resultByScraping = [];
+    $failUrls = [];
 
-    //парсинг по всем страницам
-    foreach ($pageUrlsByScrawling['urls'] as $key => $url) {
+    // парсинг по всем страницам
+    foreach ($pageUrlsByCrawling['urls'] as $key => $url) {
         try {
             $scrapingObject = new Scraping(new Client);
 
             $resultByScraping[$url] = $scrapingObject->procces($url);
         } catch (Throwable $th) {
             $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
+            $failUrls[$url] = $message;
             file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
         }
     }
 
     $dataWordsFilePath = 'App/Data/';
-    $name = str_replace(['https://', 'http://'], '', $_GET['url']);
-    $time = date("Y-m-d_h:i:s");
+    $name = str_replace(['https://', 'http://', '/'], '', $_GET['url']);
+    $time = date("Y-m-d-h-i-s");
     $resultByScrapingPath = $dataWordsFilePath . "{$name}_{$time}.json";
 
     file_put_contents($resultByScrapingPath, [json_encode($resultByScraping)]);
 
     header('Content-Type: application/json; charset=utf-8');
 
-    echo json_encode(['data' => $resultByScraping]);
+    echo json_encode(['data' => $resultByScraping, 'fail_urls' => $failUrls]);
 } catch (Throwable $ex) {
     echo "ошибка:{$ex->getMessage()}. код:{$ex->getCode()} в файле:{$ex->getFile()} на строке: {$ex->getLine()}";
 }

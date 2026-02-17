@@ -41,8 +41,8 @@ class PageСrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        $failMessage = "failed with url:" . $url;
-        file_put_contents('App/Logs/crawling', $failMessage, FILE_APPEND);
+        $failMessage = "failed with url:{$url}\n\r";
+        file_put_contents('App/Logs/Crawling.log', $failMessage, FILE_APPEND);
         // echo $failMessage . "<br>";
     }
 
