@@ -18,7 +18,7 @@ try {
 
     $url = $_GET['url'];
 
-    $crawlingObserver = new PageСrawlerObserver();
+    $crawlingObserver = new PageСrawlerObserver;
     $crawlingObj = new Crawling(new Client, $crawlingObserver);
 
     $errorScrapingLogsFilePath = 'App/Logs/Scraping.Log';
@@ -26,24 +26,26 @@ try {
     //обход и сбор всех страниц сайта по указанному url
     /** @var PageСrawlerObserver $pageObserverBeCrawling */
     $pageObserverBeCrawling = $crawlingObj->proccess($url);
-    $pageUrlsByCrawling = $pageObserverBeCrawling->pageUrls;
+    $pageSuccesUrlsByCrawling = $pageObserverBeCrawling->getPageUrls();
+    $pageFailUrlsByCrawling = $pageObserverBeCrawling->getFailUrls();
 
     $resultByScraping = [];
-    $failUrls = [];
+    $pageFailUrlsByScraping = [];
 
     // парсинг по всем страницам
-    foreach ($pageUrlsByCrawling['urls'] as $key => $url) {
+    foreach ($pageSuccesUrlsByCrawling['urls'] as $key => $url) {
         try {
             $scrapingObject = new Scraping(new Client);
 
             $resultByScraping[$url] = $scrapingObject->procces($url);
         } catch (Throwable $th) {
             $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
-            $failUrls[$url] = $message;
+            $pageFailUrlsByScraping[$url] = $message;
             file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
         }
     }
 
+    //формирование названия файла
     $dataWordsFilePath = 'App/Data/';
     $name = str_replace(['https://', 'http://', '/'], '', $_GET['url']);
     $time = date("Y-m-d-h-i-s");
@@ -53,7 +55,11 @@ try {
 
     header('Content-Type: application/json; charset=utf-8');
 
-    echo json_encode(['data' => $resultByScraping, 'fail_urls' => $failUrls]);
+    echo json_encode([
+        'data'      => $resultByScraping,
+        'couldnt_recieve_urls' => $pageFailUrlsByCrawling, //страницы которые не удалось спарсить
+        'fail_urls' => $pageFailUrlsByScraping, //страницы которые не удалось получить
+    ]);
 } catch (Throwable $ex) {
     echo "ошибка:{$ex->getMessage()}. код:{$ex->getCode()} в файле:{$ex->getFile()} на строке: {$ex->getLine()}";
 }

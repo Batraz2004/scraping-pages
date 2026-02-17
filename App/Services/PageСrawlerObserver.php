@@ -9,7 +9,18 @@ use Spatie\Crawler\CrawlObservers\CrawlObserver;
 
 class PageСrawlerObserver extends CrawlObserver
 {
-    public function __construct(public ?array $pageUrls = null) {}
+    private array $pageUrls = [];
+    private array $failedUrls = [];
+
+    public function getPageUrls(): array
+    {
+        return $this->pageUrls;
+    }
+
+    public function getFailUrls(): array
+    {
+        return $this->failedUrls;
+    }
 
     /*
      * Called when the crawler will crawl the url.
@@ -41,7 +52,7 @@ class PageСrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        $failMessage = "failed with url:{$url}\n\r";
+        $failMessage = "не удалось поулчить страницу:{$url}\n\r";
         file_put_contents('App/Logs/Crawling.log', $failMessage, FILE_APPEND);
         // echo $failMessage . "<br>";
     }

@@ -5,7 +5,6 @@ namespace App\Services;
 use DOMDocument;
 use DOMXPath;
 use Exception;
-use Throwable;
 
 class Scraping
 {
