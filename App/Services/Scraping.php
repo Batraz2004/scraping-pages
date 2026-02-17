@@ -55,7 +55,7 @@ class Scraping
                 foreach ($textContentOfNodeArr as $val) {
                     if (
                         strlen($val) > 0
-                        && preg_match("/^(?=.*[A-Za-z])[\dA-Za-z@.,;:=_-]*$/", $val) //нужно что бы строка начиналась ли цифры или с англиской буквы а потом может содержать разные знаки разделители, стркоа обязательно должна иметь буквы
+                        && preg_match("/^(?=.*[A-Za-z])[\dA-Za-z!@.,;:=_-]*$/", $val) //нужно что бы строка начиналась ли цифры или с англиской буквы а потом может содержать разные знаки разделители, стркоа обязательно должна иметь буквы
                     ) {
                         // $word = preg_replace('/\s+/', "\n\r", $word);
                         // $word = trim($word, " \n\t\r\v");
@@ -65,7 +65,7 @@ class Scraping
             }
         }
 
-        sort($extractedWords, SORT_STRING);
+        // sort($extractedWords, SORT_STRING);
 
         return $extractedWords;
     }

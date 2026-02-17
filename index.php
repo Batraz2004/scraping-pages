@@ -13,6 +13,9 @@ try {
     }
 
     //настройка базовых переменных
+    ignore_user_abort(true);
+    set_time_limit(0);
+
     $url = $_GET['url'];
 
     $scrawlingObserver = new PageСrawlerObserver();
@@ -34,7 +37,7 @@ try {
 
             $resultByScraping[$url] = $scrapingObject->procces($url);
         } catch (Throwable $th) {
-            $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex->getMessage()}. код:{$ex->getCode()} в файле:{$ex->getFile()} на строке: {$ex->getLine()} \n";
+            $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
             file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
         }
     }
