@@ -42,7 +42,7 @@ class Scraping
             $fullTextContent .= $el->textContent;
         }
 
-        $fullTextContent = preg_replace('/\s\s+/', ' ', $fullTextContent); //убрать лишние отступы
+        $fullTextContent = preg_replace('/\s+/', ' ', $fullTextContent); //убрать лишние отступы
         $fullTextContent = explode(" ", $fullTextContent);
 
         foreach ($fullTextContent as $word) {
