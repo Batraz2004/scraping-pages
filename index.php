@@ -1,18 +1,65 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/App/Services/Scraping.php';
 
+use App\Services\Crawling;
+use App\Services\PageСrawlerObserver;
 use App\Services\Scraping;
+use GuzzleHttp\Client; //from autoload.php
 
-$url = 'https://books.toscrape.com/';
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        throw new Exception('Method Not Allowed', 405);
+    }
 
-$scrapingObject = new Scraping(new \GuzzleHttp\Client());
+    //настройка базовых переменных
+    ignore_user_abort(true);
+    set_time_limit(0);
 
-$result = $scrapingObject->procces($url);
+    $url = $_GET['url'];
 
-header('Content-Type: application/json; charset=utf-8');
+    $crawlingObserver = new PageСrawlerObserver;
+    $crawlingObj = new Crawling(new Client, $crawlingObserver);
 
-echo json_encode($result);
+    $errorScrapingLogsFilePath = 'App/Logs/Scraping.Log';
 
-return json_encode($result);
+    //обход и сбор всех страниц сайта по указанному url
+    /** @var PageСrawlerObserver $pageObserverBeCrawling */
+    $pageObserverBeCrawling = $crawlingObj->proccess($url);
+    $pageSuccesUrlsByCrawling = $pageObserverBeCrawling->getPageUrls();
+    $pageFailUrlsByCrawling = $pageObserverBeCrawling->getFailUrls();
+
+    $resultByScraping = [];
+    $pageFailUrlsByScraping = [];
+
+    // парсинг по всем страницам
+    foreach ($pageSuccesUrlsByCrawling['urls'] as $key => $url) {
+        try {
+            $scrapingObject = new Scraping(new Client);
+
+            $resultByScraping[$url] = $scrapingObject->procces($url);
+        } catch (Throwable $th) {
+            $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
+            $pageFailUrlsByScraping[$url] = $message;
+            file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
+        }
+    }
+
+    //формирование названия файла
+    $dataWordsFilePath = 'App/Data/';
+    $name = str_replace(['https://', 'http://', '/'], '', $_GET['url']);
+    $time = date("Y-m-d-h-i-s");
+    $resultByScrapingPath = $dataWordsFilePath . "{$name}_{$time}.json";
+
+    file_put_contents($resultByScrapingPath, [json_encode($resultByScraping)]);
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo json_encode([
+        'data'      => $resultByScraping,
+        'couldnt_recieve_urls' => $pageFailUrlsByCrawling, //страницы которые не удалось спарсить
+        'fail_urls' => $pageFailUrlsByScraping, //страницы которые не удалось получить
+    ]);
+} catch (Throwable $ex) {
+    echo "ошибка:{$ex->getMessage()}. код:{$ex->getCode()} в файле:{$ex->getFile()} на строке: {$ex->getLine()}";
+}
