@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 
-class PageСrawlerObserver extends CrawlObserver
+class PageCrawlerObserver extends CrawlObserver
 {
     private array $pageUrls = [];
     private array $failedUrls = [];
