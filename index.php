@@ -54,6 +54,12 @@ try {
     file_put_contents($resultByScrapingPath, [json_encode($resultByScraping)]);
 
     header('Content-Type: application/json; charset=utf-8');
+    // header("Content-Disposition: attachment; filename={$name}.json");
+    // header('Expires: 0'); //No caching allowed
+    // header('Cache-Control: must-revalidate');
+    // header('Content-Length: ' . count($resultByScraping));
+
+    // file_put_contents('php://output', $resultByScraping);
 
     echo json_encode([
         'data'      => $resultByScraping,
