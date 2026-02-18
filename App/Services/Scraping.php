@@ -42,19 +42,15 @@ class Scraping
             $fullTextContent .= $el->textContent;
         }
 
-        $fullTextContent = preg_replace('/\s+/', ' ', $fullTextContent); //убрать лишние отступы
+        $fullTextContent = preg_replace('/\s+/', ' ', $fullTextContent); //убрать лишние отступы и нормализовать пробелы
         $fullTextContent = explode(" ", $fullTextContent);
 
         foreach ($fullTextContent as $word) {
-            $word = trim($word); //удалить пробелы у слова
-            $textContentOfNodeArr = explode(" ", $word);
-            foreach ($textContentOfNodeArr as $val) {
-                if (
-                    strlen($val) > 0
-                    && preg_match("/^(?=.*[A-Za-z])[\dA-Za-z!@.,;:=_-]*$/", $val) //нужно что бы строка начиналась ли цифры или с англиской буквы а потом может содержать разные знаки разделители, стркоа обязательно должна иметь буквы
-                ) {
-                    $extractedWords[] = $val;
-                }
+            if (
+                strlen($word) > 0
+                && preg_match("/^(?=.*[A-Za-z])[\dA-Za-z[:punct:]]*$/", $word) //нужно что бы строка начиналась ли цифры или с англиской буквы а потом может содержать разные спец символы(!"#$%&'()*+,-./:;<=>?@[\]^_\`{|}~), стркоа обязательно должна иметь буквы
+            ) {
+                $extractedWords[] = $word;
             }
         }
 
