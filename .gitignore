@@ -1,5 +1,5 @@
 App/Logs/*
 App/Data/*
-vendor/
+vendor/*
 !App/Data/.gitkeep
 !App/Logs/.gitkeep
