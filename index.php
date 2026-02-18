@@ -54,6 +54,8 @@ try {
     file_put_contents($resultByScrapingPath, [json_encode($resultByScraping)]);
 
     header('Content-Type: application/json; charset=utf-8');
+
+    //если нужно скачивать
     // header("Content-Disposition: attachment; filename={$name}.json");
     // header('Expires: 0'); //No caching allowed
     // header('Cache-Control: must-revalidate');

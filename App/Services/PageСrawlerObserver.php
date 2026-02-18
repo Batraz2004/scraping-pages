@@ -40,6 +40,15 @@ class PageСrawlerObserver extends CrawlObserver
         ?string $linkText = null,
     ): void {
         // echo "crawling succes:" . $url . "<br>";
+
+        //избежать получение картин        
+        $urlExtension = pathinfo($url->__toString(), PATHINFO_EXTENSION);
+        $exceptionUrlEnds = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'];
+
+        if (in_array($urlExtension, $exceptionUrlEnds)) {
+            return;
+        };
+
         $this->pageUrls['urls'][] = $url->__toString();
     }
 
