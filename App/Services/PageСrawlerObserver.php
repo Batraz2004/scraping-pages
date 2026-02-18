@@ -61,9 +61,10 @@ class PageСrawlerObserver extends CrawlObserver
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null,
     ): void {
-        $failMessage = "не удалось поулчить страницу:{$url}\n\r";
-        file_put_contents('App/Logs/Crawling.log', $failMessage, FILE_APPEND);
         // echo $failMessage . "<br>";
+
+        $failMessage = "не удалось получить страницу:{$url}\n\r";
+        file_put_contents('App/Logs/Crawling.log', $failMessage, FILE_APPEND);
     }
 
     /*
@@ -72,6 +73,7 @@ class PageСrawlerObserver extends CrawlObserver
     public function finishedCrawling(): void
     {
         // echo "<br>finish crawling!";
+
         file_put_contents('App/Data/siteUrlsByCrawling.json', json_encode($this->pageUrls));
     }
 }
