@@ -41,8 +41,11 @@ try {
         } catch (Throwable $th) {
             $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
             $pageFailUrlsByScraping[$url] = $message;
-            file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
         }
+    }
+
+    if (count($pageFailUrlsByScraping) > 0) {
+        file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
     }
 
     //формирование названия файла
