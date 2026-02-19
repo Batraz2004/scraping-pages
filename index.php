@@ -21,29 +21,19 @@ try {
     $crawlingObserver = new PageCrawlerObserver;
     $crawlingObj = new Crawling(new Client, $crawlingObserver);
 
-    $errorScrapingLogsFilePath = 'App/Logs/Scraping.Log';
-
     //обход и сбор всех страниц сайта по указанному url
     /** @var PageCrawlerObserver $pageObserverBeCrawling */
     $pageObserverBeCrawling = $crawlingObj->proccess($url);
     $pageSuccesUrlsByCrawling = $pageObserverBeCrawling->getPageUrls();
     $pageFailUrlsByCrawling = $pageObserverBeCrawling->getFailUrls();
 
+    //парсинг собранных страниц
     $resultByScraping = [];
     $pageFailUrlsByScraping = [];
 
-    // парсинг по всем страницам
-    foreach ($pageSuccesUrlsByCrawling['urls'] as $key => $url) {
-        try {
-            $scrapingObject = new Scraping(new Client);
+    $scrapingObject = new Scraping(new Client);
 
-            $resultByScraping[$url] = $scrapingObject->procces($url);
-        } catch (Throwable $th) {
-            $message = "не удалось спарсить страницу: {$url} под номером {$key} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
-            $pageFailUrlsByScraping[$url] = $message;
-            file_put_contents($errorScrapingLogsFilePath, $message, FILE_APPEND);
-        }
-    }
+    $resultByScraping[] = $scrapingObject->procces($pageSuccesUrlsByCrawling['urls'], $pageFailUrlsByScraping);
 
     //формирование названия файла
     $dataWordsFilePath = 'App/Data/';
@@ -54,14 +44,6 @@ try {
     file_put_contents($resultByScrapingPath, [json_encode($resultByScraping)]);
 
     header('Content-Type: application/json; charset=utf-8');
-
-    //если нужно скачивать
-    // header("Content-Disposition: attachment; filename={$name}.json");
-    // header('Expires: 0'); //No caching allowed
-    // header('Cache-Control: must-revalidate');
-    // header('Content-Length: ' . count($resultByScraping));
-
-    // file_put_contents('php://output', $resultByScraping);
 
     echo json_encode([
         'data'      => $resultByScraping,
