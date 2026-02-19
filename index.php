@@ -3,7 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Services\Crawling;
-use App\Services\PageСrawlerObserver;
+use App\Services\PageCrawlerObserver;
 use App\Services\Scraping;
 use GuzzleHttp\Client; //from autoload.php
 
@@ -18,13 +18,13 @@ try {
 
     $url = $_GET['url'];
 
-    $crawlingObserver = new PageСrawlerObserver;
+    $crawlingObserver = new PageCrawlerObserver;
     $crawlingObj = new Crawling(new Client, $crawlingObserver);
 
     $errorScrapingLogsFilePath = 'App/Logs/Scraping.Log';
 
     //обход и сбор всех страниц сайта по указанному url
-    /** @var PageСrawlerObserver $pageObserverBeCrawling */
+    /** @var PageCrawlerObserver $pageObserverBeCrawling */
     $pageObserverBeCrawling = $crawlingObj->proccess($url);
     $pageSuccesUrlsByCrawling = $pageObserverBeCrawling->getPageUrls();
     $pageFailUrlsByCrawling = $pageObserverBeCrawling->getFailUrls();

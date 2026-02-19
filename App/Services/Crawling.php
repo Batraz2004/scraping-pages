@@ -9,7 +9,7 @@ use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
 
 class Crawling
 {
-    public function __construct(public \GuzzleHttp\Client $httpClient, public PageСrawlerObserver $pageObserver) {}
+    public function __construct(public \GuzzleHttp\Client $httpClient, public PageCrawlerObserver $pageObserver) {}
 
     public function proccess($url): CrawlObserver
     {
