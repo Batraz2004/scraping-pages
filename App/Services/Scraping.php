@@ -5,6 +5,7 @@ namespace App\Services;
 use DOMDocument;
 use DOMXPath;
 use Exception;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -62,7 +63,7 @@ class Scraping
                     }
                 }
             },
-            'rejected' => function (RequestException $ex, $index) use ($urls, $errorScrapingLogsFilePath, &$pageFailUrlsByScraping) {
+            'rejected' => function (RequestException|ConnectException $ex, $index) use ($urls, $errorScrapingLogsFilePath, &$pageFailUrlsByScraping) {
                 $url = $urls[$index];
                 $message = "не удалось спарсить страницу: {$url} под номером {$index} , ошибка:{$ex?->getMessage()}. код:{$ex?->getCode()} в файле:{$ex?->getFile()} на строке: {$ex?->getLine()} \n";
                 $pageFailUrlsByScraping[$url] = $message;
