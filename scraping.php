@@ -33,7 +33,7 @@ try {
 
     $scrapingObject = new Scraping(new Client);
 
-    $resultByScraping[] = $scrapingObject->procces($pageSuccesUrlsByCrawling['urls'], $pageFailUrlsByScraping);
+    $resultByScraping[] = $scrapingObject->procces($pageSuccesUrlsByCrawling, $pageFailUrlsByScraping);
 
     //формирование названия файла
     $dataWordsFilePath = 'App/Data/';

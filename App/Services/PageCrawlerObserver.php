@@ -49,7 +49,7 @@ class PageCrawlerObserver extends CrawlObserver
             return;
         };
 
-        $this->pageUrls['urls'][] = $url->__toString();
+        $this->pageUrls[] = $url->__toString();
     }
 
     /*
